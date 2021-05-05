@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+</h:head>
+<h:body style="margin: 0;">
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div style="width: -webkit-fill-available; background-color: #edf0f2">
+			<ui:include src="/topMenuBar.xhtml" />
+
+			<div style="margin: 20px; height: 100vh;">
+				<p:tabView>
+					<p:tab title="Genders">
+						<ui:include src="/genderList.xhtml" />
+					</p:tab>
+					<p:tab title="Locations">
+						<ui:include src="/locationList.xhtml" />
+					</p:tab>
+					<p:tab title="Languages">
+						<ui:include src="/languageList.xhtml" />
+					</p:tab>
+					<p:tab title="User Data">
+						User data
+						</p:tab>
+				</p:tabView>
+			</div>
+		</div>
+	</div>
+
+	<!-- Gender Modal -->
+	<h:form>
+		<p:dialog id="createGender" modal="true" widgetVar="crGender"
+			resizable="false" stylr="position:absolute;" header="Create Gender"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name" />
+				<p:inputText value="#{backofficeBean.genreName}" />
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateGenre}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+	<!-- Location Modal -->
+	<h:form>
+		<p:dialog id="createLocation" modal="true" widgetVar="crLocation"
+			resizable="false" stylr="position:absolute;" header="Create Location"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name" />
+				<p:inputText value="#{backofficeBean.locationName}" />
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateLocation}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+	<!-- Language Modal -->
+	<h:form>
+		<p:dialog id="createLanguage" modal="true" widgetVar="crLanguage"
+			resizable="false" stylr="position:absolute;" header="Create Language"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name" />
+				<p:inputText value="#{backofficeBean.languageName}" />
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateLanguage}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<h:head>
+</h:head>
+<h:body style="margin: 0;">
+
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div
+			style="width: -webkit-fill-available; background-color: #1c1c1f; background-image: url('./img/movie4.png'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; background-position: center;">
+			<ui:include src="/topMenuBar.xhtml" />
+
+
+			<!-- Page Content -->
+			<div>
+
+				<p:growl id="growl" showDetail="true" />
+				<p:growl id="messages" showDetail="true" />
+
+				<div
+					style="display: flex; justify-content: center; margin-bottom: 1%; margin-top: 5%; align-items: center;">
+					<h2
+						style="margin-right: 700px; font-family: Arial, Helvetica, sans-serif;">Room
+						List</h2>
+					<h:form>
+						<p:commandButton value="Create" onclick="PF('crRoom').show()" />
+					</h:form>
+				</div>
+
+				<h:form id="listOfRoomsForm">
+					<div class="card" style="text-align: -webkit-center;">
+						<!-- <h2 style="font-family: Arial, Helvetica, sans-serif;">Genres</h2> -->
+						<p:dataTable var="product" value="#{roomBean.listOfRooms}"
+							style="width: 1000px; text-align-last: center; box-shadow: 5px 6px 8px 0px #888888;"
+							rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+							paginatorPosition="bottom" tableStyle="table-layout: auto;"
+							id="listOfRoomTable">
+
+							<p:column style="width:2rem">
+								<p:rowToggler />
+							</p:column>
+							<p:column headerText="Name">
+								<h:outputText value="#{product.name}" />
+							</p:column>
+							<p:column headerText="Capacity">
+								<h:outputText value="#{product.capacity}" />
+							</p:column>
+							<p:column headerText="Is Active">
+								<h:outputLabel rendered="#{product.isActive != true}">
+									<i class="fas fa-times" style="color: red" />
+								</h:outputLabel>
+								<h:outputLabel rendered="#{product.isActive != false}">
+									<i class="fas fa-check" style="color: green" />
+								</h:outputLabel>
+							</p:column>
+
+							<p:column headerText="">
+								<p:commandLink style="margin-right:2%;"
+									action="#{roomBean.updateRoomSlots(product)}"
+									rendered="#{product.isActive != false}">
+									<i class="fas fa-plus" style="color: green; margin-right: 2%" />
+								</p:commandLink>
+								<p:commandLink style="margin-right:2%;"
+									action="#{roomBean.updateRoom(product)}"
+									rendered="#{product.isActive != false}" update="couRoom">
+									<i class="far fa-edit" style="color: blue; margin-right: 2%" />
+								</p:commandLink>
+								<p:commandLink
+									action="#{roomBean.changeActiveStateRoom(product, false)}"
+									style="display: inline-block;"
+									rendered="#{product.isActive != false}">
+									<i class="fas fa-times" style="color: red" />
+								</p:commandLink>
+								<p:commandLink
+									action="#{roomBean.changeActiveStateRoom(product, true)}"
+									style="display: inline-block;"
+									rendered="#{product.isActive != true}">
+									<i class="fas fa-check" style="color: green" />
+								</p:commandLink>
+							</p:column>
+
+							<p:rowExpansion>
+								<h:form id="slotTimeForm">
+									<ui:repeat var="slot" value="#{product.slots}">
+										<ul>
+											<li><h:outputText value="#{slot.movie.name}" /> &nbsp;
+												<h:outputText value="#{slot.initialTime}">
+													<f:convertDateTime pattern="HH:mm" timeZone="CET" />
+												</h:outputText> - <h:outputText value="#{slot.endTime}">
+													<f:convertDateTime pattern="HH:mm" timeZone="CET" />
+												</h:outputText> &nbsp; <h:outputText value="#{slot.initialDay}">
+													<f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+												</h:outputText> - <h:outputText value="#{slot.endDay}">
+													<f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+												</h:outputText> &nbsp; <h:outputText value="#{slot.ticketPrice} €" /> <p:commandLink
+													style="font-size: smaller;display: inline-block; margin-left: 10px;">
+													<i class="fas fa-trash" style="color: red" />
+													<p:ajax event="click"
+														listener="#{roomBean.deleteSLotInRoom(slot)}"
+														update=":listOfRoomsForm:listOfRoomTable:slotTimeForm" />
+												</p:commandLink></li>
+										</ul>
+									</ui:repeat>
+								</h:form>
+							</p:rowExpansion>
+
+						</p:dataTable>
+					</div>
+				</h:form>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Create Or Update Room Modal -->
+	<h:form id="couRoom">
+		<p:dialog id="createRoom" modal="true" widgetVar="crRoom"
+			resizable="false" stylr="position:absolute;" header="Create Room"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name" />
+				<p:inputText value="#{roomBean.name}" />
+
+				<p:outputLabel value="Capacity" />
+				<p:inputText value="#{roomBean.capacity}" />
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{roomBean.createOrUpdateRoom}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+	<!-- Create Slot Modal -->
+	<h:form>
+		<p:dialog id="createSlot" modal="true" widgetVar="crAddSlot"
+			resizable="false" stylr="position:absolute;" header="Create Slot"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Movie" />
+				<p:selectOneMenu id="advanced" value="#{roomBean.movie}"
+					panelStyle="width:180px" effect="fade" var="c" filter="true"
+					filterMatchMode="startsWith"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItems value="#{roomBean.listOfMovies}" var="movie"
+						itemLabel="#{movie.name}" itemValue="#{movie}" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{c.name}" />
+					</p:column>
+
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<div class="ui-fluid p-grid p-formgrid">
+				<div class="p-field p-col-12 p-md-4">
+					<p:outputLabel for="initialTime" value="Begin (hour)" />
+					<p:datePicker id="initialTime" value="#{roomBean.initialTime}"
+						timeOnly="true" pattern="HH:mm" />
+				</div>
+			</div>
+			<div class="ui-fluid p-grid p-formgrid">
+				<div class="p-field p-col-12 p-md-4">
+					<p:outputLabel for="endTime" value="End (hour)" />
+					<p:datePicker id="endTime" value="#{roomBean.endTime}"
+						timeOnly="true" pattern="HH:mm" />
+				</div>
+			</div>
+			<div class="p-field p-col-12 p-md-4">
+				<p:outputLabel for="range" value="Range Selection" />
+				<p:datePicker id="range" selectionMode="range"
+					value="#{roomBean.range}" readonlyInput="true" />
+			</div>
+			<div class="p-field p-col-12 p-md-4">
+				<p:outputLabel value="Ticket Price" />
+				<p:inputText value="#{roomBean.ticketPrice}"></p:inputText>
+			</div>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create" action="#{roomBean.addSlotToRoom}"
+					ajax="false" style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>
+

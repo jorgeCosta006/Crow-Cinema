@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+</h:head>
+<h:body style="margin: 0;">
+
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div
+			style="width: -webkit-fill-available; background-color: #1c1c1f; background-image: url('./img/movie4.png'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; background-position: center;">
+			<ui:include src="/topMenuBar.xhtml" />
+
+
+			<!-- Page Content -->
+			<div>
+
+				<p:growl id="growl" showDetail="true" />
+
+				<div
+					style="display: flex; justify-content: center; margin-bottom: 1%; margin-top: 5%; align-items: center;">
+					<h2
+						style="margin-right: 700px; font-family: Arial, Helvetica, sans-serif;">Genres</h2>
+					<h:form>
+						<p:commandButton value="Create"
+							action="#{backofficeBean.newGenre}" update="couGenre" />
+					</h:form>
+				</div>
+
+				<h:form>
+					<div class="card" style="text-align: -webkit-center;">
+						<!-- <h2 style="font-family: Arial, Helvetica, sans-serif;">Genres</h2> -->
+						<p:dataTable var="product" value="#{backofficeBean.listOfGenres}"
+							style="width: 1000px; text-align-last: center; box-shadow: 5px 6px 8px 0px #888888;"
+							rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+							paginatorPosition="bottom" tableStyle="table-layout: auto;">
+
+							<p:column headerText="Name">
+								<h:outputText value="#{product.name}" />
+							</p:column>
+
+							<p:column headerText="">
+								<p:commandLink style="margin-right:2%;"
+									action="#{backofficeBean.updateGenre(product)}"
+									update="couGenre">
+									<i class="far fa-edit" style="color: blue" />
+								</p:commandLink>
+								<p:commandLink action="#{backofficeBean.deleteGenre(product)}"
+									style="display: inline-block;">
+									<i class="fas fa-trash" style="color: red" />
+								</p:commandLink>
+							</p:column>
+
+						</p:dataTable>
+					</div>
+				</h:form>
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Create Or Update Genre Modal -->
+	<h:form id="couGenre">
+		<p:dialog id="createGenre" modal="true" widgetVar="crGenre"
+			resizable="false" stylr="position:absolute;" header="Create Genre"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name &nbsp; &nbsp;" />
+				<p:inputText value="#{backofficeBean.name}"/>
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateGenre}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>
+

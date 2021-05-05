@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<link rel="stylesheet"
+		href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" />
+	<style>
+.ui-menuitem-link.ui-submenu-link.ui-corner-all {
+	width: -webkit-fill-available;
+	display: flex;
+	justify-content: center;
+	font-size: initial;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.ui-widget.ui-menuitem.ui-corner-all.ui-menu-parent.ui-menuitem-active {
+	background-color: #97060b
+}
+
+.ui-menuitem-link.ui-submenu-link.ui-corner-all.ui-state-hover {
+	background: none !important
+}
+
+.ui-icon.ui-icon-triangle-1-e {
+	display: none !important
+}
+
+.ui-menuitem-icon.ui-icon {
+	margin: 0 !important
+}
+</style>
+
+</h:head>
+<h:body>
+	<div style="margin-bottom: 2%; height: 100vh;">
+		<h:form>
+			<div class="card"
+				style="border: none; display: flex; flex-direction: column; align-items: center;">
+				<img src="img/cinema-o.png" alt="img" style="width: 44px;"></img>
+
+				<p:megaMenu orientation="vertical" autoDisplay="false"
+					style="background: none; border: none; padding: 0; width: -webkit-fill-available;">
+
+					<p:submenu icon="fa fa-home">
+						<p:column style="border-left: solid; border-left-color: #97060b;">
+							<p:submenu label="Home" style="background: white; border: none;">
+								<p:menuitem value="Main Page"
+									action="#{userBean.changePage('mainPage')}" />
+							</p:submenu>
+						</p:column>
+					</p:submenu>
+
+					<p:submenu icon="fas fa-cog">
+						<p:column style="border-left: solid; border-left-color: #97060b;">
+							<p:submenu label="Backoffice"
+								style="background: white; border: none;">
+								<p:menuitem value="Genre"
+									action="#{userBean.changePage('genreList')}" />
+								<p:menuitem value="Location"
+									action="#{userBean.changePage('locationList')}" />
+								<p:menuitem value="Language"
+									action="#{userBean.changePage('languageList')}" />
+								<p:menuitem value="Movie Theater"
+									action="#{userBean.changePage('movieTheaterList')}" />
+								<p:menuitem value="Movie"
+									action="#{userBean.changePage('movieList')}" />
+								<p:menuitem value="Room"
+									action="#{userBean.changePage('roomList')}" />
+									<p:menuitem value="Discount"
+									action="#{userBean.changePage('discountList')}" />
+							</p:submenu>
+						</p:column>
+					</p:submenu>
+				</p:megaMenu>
+			</div>
+		</h:form>
+	</div>
+</h:body>
+</html>

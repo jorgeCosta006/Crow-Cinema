@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<h:head>
+</h:head>
+<h:body style="margin: 0;">
+
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div
+			style="width: -webkit-fill-available; background-color: #1c1c1f; background-image: url('./img/movie4.png'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; background-position: center;">
+			<ui:include src="/topMenuBar.xhtml" />
+
+
+			<!-- Page Content -->
+			<div>
+
+				<p:growl id="growl" showDetail="true" />
+				<p:growl id="messages" showDetail="true" />
+
+				<div
+					style="display: flex; justify-content: center; margin-bottom: 1%; margin-top: 5%; align-items: center;">
+					<h2
+						style="margin-right: 700px; font-family: Arial, Helvetica, sans-serif;">Movie
+						List</h2>
+					<h:form>
+						<p:commandButton value="Create" onclick="PF('crMovie').show()" />
+					</h:form>
+				</div>
+
+				<h:form>
+					<div class="card" style="text-align: -webkit-center;">
+						<!-- <h2 style="font-family: Arial, Helvetica, sans-serif;">Genres</h2> -->
+						<p:dataTable var="product" value="#{backofficeBean.listOfMovies}"
+							style="width: 1000px; text-align-last: center; box-shadow: 5px 6px 8px 0px #888888;"
+							rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+							paginatorPosition="bottom" tableStyle="table-layout: auto;">
+
+							<p:column headerText="Image">
+								<p:graphicImage value="#{product.image}" alt="No picture set"
+									stream="false" style="width: 100px;" />
+							</p:column>
+							<p:column headerText="Name">
+								<h:outputText value="#{product.name}" />
+							</p:column>
+							<p:column headerText="Description">
+								<h:outputText value="#{product.description}" />
+							</p:column>
+							<p:column headerText="Genre">
+								<ui:repeat var="genre" value="#{product.genres}">
+									<ul>
+										<li><h:outputText value="#{genre.name}" /></li>
+									</ul>
+								</ui:repeat>
+							</p:column>
+							<p:column headerText="Language">
+								<h:outputText value="#{product.language.name}" />
+							</p:column>
+							<p:column headerText="Release Date">
+								<h:outputText value="#{product.releaseDate}">
+									<f:convertDateTime pattern="dd.MM.yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Age Control">
+								<h:outputText value="#{product.ageControl}" />
+							</p:column>
+
+							<p:column headerText="">
+								<p:commandLink style="margin-right:2%;"
+									action="#{backofficeBean.updateMovieTheater(product)}"
+									rendered="#{product.isActive != false}">
+									<i class="far fa-edit" style="color: blue; margin-right: 2%" />
+								</p:commandLink>
+								<p:commandLink action="#{backofficeBean.deleteMovie(product)}"
+									style="display: inline-block;"
+									rendered="#{product.isActive != false}">
+									<i class="fas fa-trash" style="color: red" />
+								</p:commandLink>
+							</p:column>
+
+						</p:dataTable>
+					</div>
+				</h:form>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Create Movie Modal -->
+	<h:form>
+		<p:dialog id="createMovie" modal="true" widgetVar="crMovie"
+			resizable="true" stylr="position:absolute;" header="Create Movie"
+			style="border-radius: 10px;">
+			<div style="display: flex">
+
+
+				<h:panelGrid columns="2" style="margin-right: 10px;">
+
+					<p:outputLabel value="Image" />
+					<p:fileUpload mode="advanced" multiple="false" sizeLimit="102400"
+						allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+						invalidSizeMessage="Maximum file size allowed is 100 KB"
+						invalidFileMessage="only gif | jpg | jpeg | png is allowed"
+						update="messages" listener="#{backofficeBean.handleFileUpload}" />
+
+					<p:outputLabel value="Name" />
+					<p:inputText value="#{backofficeBean.name}"
+						style="width: -webkit-fill-available;" />
+
+					<p:outputLabel value="Description" />
+					<p:inputTextarea rows="6" cols="33" maxlength="100"
+						value="#{backofficeBean.description}" />
+
+					<p:outputLabel value="Age Control" />
+					<p:inputText value="#{backofficeBean.ageControl}"
+						style="width: -webkit-fill-available;" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="Language" />
+					<p:selectOneMenu id="advancedSOM" value="#{backofficeBean.language}"
+						panelStyle="width:180px" effect="fade" var="c" filter="true"
+						filterMatchMode="startsWith"
+						converter="omnifaces.SelectItemsConverter"
+						style="width: -webkit-fill-available;">
+						<f:selectItems value="#{backofficeBean.listOfLanguages}"
+							var="language" itemLabel="#{language.name}"
+							itemValue="#{language}" />
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Name" />
+							</f:facet>
+							<h:outputText value="#{c.name}" />
+						</p:column>
+
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Genres" />
+					<p:selectManyMenu id="advanced"
+						value="#{backofficeBean.selectedGenres}"
+						converter="omnifaces.SelectItemsConverter" var="g"
+						filter="true" filterMatchMode="contains"
+						styleClass="manymenu-advanced" showCheckbox="true" style="height: 216px; overflow: scroll;">
+						<f:selectItems value="#{backofficeBean.listOfGenres}" var="genre"
+							itemLabel="#{genre.name}" itemValue="#{genre}"/>
+							<p:column>
+								<h:outputText value="#{g.name}" />
+							</p:column>
+					</p:selectManyMenu>
+
+					<p:outputLabel for="releaseDate" value="Release Date" />
+					<p:datePicker id="releaseDate"
+						value="#{backofficeBean.releaseDate}"
+						style="width: -webkit-fill-available;" />
+				</h:panelGrid>
+
+
+			</div>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateMovie}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>
+

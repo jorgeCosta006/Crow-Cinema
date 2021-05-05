@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<style>
+a {
+	cursor: pointer;
+}
+</style>
+</h:head>
+<h:body>
+	<div style="display: flex; flex-direction: column; margin-top: 4%">
+		<div
+			style="display: flex; flex-direction: column; align-self: center;">
+			<div>
+				<img src="img/cinema-logo.png" alt="logo"
+					style="width: 400px; height: 400px;" />
+			</div>
+
+			<p:growl id="growl" showDetail="true" life="3000" />
+
+			<div style="display: flex; justify-content: center; margin-top: 1%;">
+				<h:form>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="E-mail" />
+						<p:inputText value="#{userBean.email}" />
+						<p:outputLabel value="Password" />
+						<p:password value="#{userBean.password}" />
+					</h:panelGrid>
+					<!-- 						<h:outputLabel /> -->
+					<div style="text-align: center; margin-top: 2%">
+						<p:commandButton value="Login" action="#{userBean.processLogin}"
+							ajax="false" style="padding: 0px 100px;" />
+					</div>
+					<p
+						style="font-family: -apple-system, BlinkMacSystemFont,' Segoe UI ', Roboto, ' Helvetica Neue ', Arial, ' Noto Sans ', sans-serif, ' Apple Color Emoji ', ' Segoe UI Emoji ', ' Segoe UI Symbol ', ' Noto ColorEmoji '">
+						Don't have an account? <a onclick="PF('crUser').show()"
+							style="color: blue">Register here</a>
+					</p>
+				</h:form>
+			</div>
+		</div>
+	</div>
+
+
+	<!--                        CREATE USER MODAL                                      -->
+	<h:form>
+
+		<p:dialog id="createUserModal" modal="true" widgetVar="crUser"
+			resizable="false" stylr="position:absolute;" header="Create User"
+			style="border-radius: 10px">
+			<h:panelGrid columns="2" id="createUserPanel">
+	            Name: 
+	            <p:inputText id="username" value="#{createUserBean.name}" />
+	            
+	            E-mail: 
+	            <p:inputText id="crEmail" value="#{createUserBean.crEmail}" />
+
+				Role:
+                <p:selectOneMenu id="option"
+					value="#{createUserBean.role}" style="width: -webkit-fill-available;">
+					<f:selectItem itemLabel="Client" itemValue="CLIENT" />
+					<f:selectItem itemLabel="Admin" itemValue="ADMIN" />
+				</p:selectOneMenu>
+	            
+	            Password: 
+	            <p:password id="crPassword"
+					value="#{createUserBean.crPassword}" />
+	            
+	            Repeat Password: 
+	            <p:password id="repeatCrPassword"
+					value="#{createUserBean.repeatCrPassword}" />
+
+			</h:panelGrid>
+
+			<p:outputPanel
+				style="margin-top: 5%; display: flex ;justify-content: flex-end;">
+				<p:commandButton value="Cancel" ajax="false"
+					onclick="PF('crUser').hide()" style="margin-right: 2%" />
+				<p:commandButton value="Create" ajax="false"
+					action="#{createUserBean.createUser}" />
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

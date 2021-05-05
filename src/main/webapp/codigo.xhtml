@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:of="http://omnifaces.org/functions">
+<h:head>
+	<style type="text/css">
+.p {
+	line-height: 1.5;
+	margin: 0;
+}
+
+.zoomImage:hover {
+	transform: scale(1.5) !important;
+}
+
+.ui-selectonemenu-label.ui-inputfield.ui-corner-all {
+	font-size: small !important;
+}
+
+.ui-button-text.ui-c:hover {
+	background-color: #c2cbd2;
+	border-radius: 10px;
+}
+</style>
+</h:head>
+<h:body style="margin: 0;">
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div
+			style="width: -webkit-fill-available; background-image: url('./img/movie-background.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; background-position: center;">
+			<ui:include src="/topMenuBar.xhtml" />
+
+			<div>
+				<div
+					style="display: flex; justify-content: flex-end; margin-bottom: 1%; margin-top: 5%; align-items: center; margin-right: 4%">
+					<h:form>
+						<p:selectOneMenu id="movieTheaterAdvanced"
+							value="#{mainPageBean.movieTheater}" panelStyle="width:180px"
+							effect="fade" var="c" filter="true" filterMatchMode="startsWith"
+							converter="omnifaces.SelectItemsConverter"
+							valueChangeListener="#{mainPageBean.onChangeMovieTheater}">
+							<!-- <p:ajax event="valueChange" listener="#{mainPageBean.onChangeMovieTheater}"/> -->
+							<p:ajax event="valueChange" immediate="true" process="@this" />
+							<!-- <f:ajax event="change" execute="@form" render="mpMovies"/> -->
+							<f:selectItems value="#{mainPageBean.listOfMovieTheaters}"
+								var="movieTheater" itemLabel="#{movieTheater.name}"
+								itemValue="#{movieTheater}" />
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Name" />
+								</f:facet>
+								<h:outputText value="#{c.name}" />
+							</p:column>
+
+						</p:selectOneMenu>
+					</h:form>
+				</div>
+
+
+				<div>
+					<h:form id="mpMovies"
+						style="display: flex; justify-content: center;">
+						<ui:repeat var="movie" value="#{mainPageBean.listOfMovies}">
+							<div
+								style="display: flex; flex-direction: column; margin-right: 50px; align-items: center;"
+								class="zoomImage">
+								<h:commandLink>
+									<p:graphicImage value="#{movie.image}" alt="No picture set"
+										stream="false"
+										style="width: 150px; border-radius: 5px; height: 200px;" />
+									<p:ajax event="click"
+										listener="#{mainPageBean.selectMovie(movie)}"
+										update="sMovieModal" />
+								</h:commandLink>
+								<h:outputText value="#{movie.name}"
+									style="margin-top: 8px; background-color: white; border-radius: 4px; width: -webkit-fill-available; display: flex; justify-content: center; font-family: Arial, Helvetica, sans-serif;" />
+							</div>
+						</ui:repeat>
+					</h:form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Selected Movie Modal -->
+	<h:form id="sMovieModal">
+		<p:dialog id="selectedMovie" modal="true" widgetVar="sMovie"
+			resizable="false" stylr="position:absolute;"
+			header="#{mainPageBean.selectedMovie.name}"
+			style="border-radius: 10px;">
+			<div style="display: flex; flex-direction: row;">
+				<p:graphicImage value="#{mainPageBean.selectedMovie.image}"
+					alt="No picture set" stream="false"
+					style="width: 100px; border-radius: 5px; margin-right: 5px;" />
+
+				<div
+					style="display: flex; flex-direction: column; justify-content: space-between;">
+					<div style="width: 400px">
+						<h:outputText value="#{mainPageBean.selectedMovie.description}" />
+					</div>
+					<div>
+						<div style="display: flex; flex-direction: row;">
+							<h:outputText value="Age Control: &nbsp;"
+								style="font-weight: bold" />
+							<h:outputText value="#{mainPageBean.selectedMovie.ageControl}" />
+						</div>
+						<div style="display: flex; flex-direction: row;">
+							<h:outputText value="Language: &nbsp;" style="font-weight: bold" />
+							<h:outputText value="#{mainPageBean.selectedMovie.language.name}" />
+						</div>
+						<div style="display: flex; flex-direction: row;">
+							<h:outputText value="Release Date: &nbsp;"
+								style="font-weight: bold" />
+							<h:outputText value="#{mainPageBean.selectedMovie.releaseDate}">
+								<f:convertDateTime pattern="dd.MM.yyyy" />
+							</h:outputText>
+						</div>
+					</div>
+				</div>
+			</div>
+			<p:commandButton value="Buy" action="#{mainPageBean.ticketBuyingSection}"/>
+			<!-- <div style="text-align: center; margin-top: 2%">
+				<div
+					style="display: flex; justify-content: space-between; align-items: center;">
+					<h:outputText value="Scheduales" style="font-weight: bold" />
+					<div>
+						<p:selectOneMenu id="weekCalendarAdvanced"
+							value="#{mainPageBean.selectedDate}" panelStyle="width:180px"
+							effect="fade" var="c" converter="omnifaces.SelectItemsConverter"
+							valueChangeListener="#{mainPageBean.changeSLotsScheduale}">
+							<p:ajax event="change" />
+							<f:selectItems value="#{mainPageBean.listOfDates}" var="date"
+								itemLabel="#{of:formatDate(date, 'd MMM yyyy')}"
+								itemValue="#{date}" />
+
+							<p:column>
+								<h:outputText value="#{c}">
+									<f:convertDateTime pattern="dd.MM.yyyy" />
+								</h:outputText>
+							</p:column>
+
+						</p:selectOneMenu>
+					</div>
+				</div>
+				<div style="display: flex">
+					<ui:repeat var="slot" value="#{mainPageBean.listOfSlots}">
+						<h:commandLink style="margin-right: 10px"
+							action="#{mainPageBean.selectSlot(slot)}">
+							<h:outputText value="#{slot.initialTime}">
+								<f:convertDateTime pattern="HH:mm" timeZone="CET" />
+							</h:outputText>
+						</h:commandLink>
+					</ui:repeat>
+				</div>
+			</div> -->
+
+
+		</p:dialog>
+	</h:form>
+
+	<!-- Buy Tickets Modal -->
+	<h:form id="buyTickets">
+		<p:dialog id="buyTicketsDialog" modal="true"
+			widgetVar="buyTicketsDialog" resizable="false"
+			stylr="position:absolute;"
+			header="#{mainPageBean.selectedMovie.name}"
+			style="border-radius: 10px;">
+
+			<h:panelGroup rendered="#{mainPageBean.selectedSlot != null}">
+				<h:outputText value="Scheduale" style="font-weight: bold" />
+				<h:outputText value="#{mainPageBean.selectedSlot.initialTime}">
+					<f:convertDateTime pattern="HH:mm" timeZone="CET" />
+				</h:outputText>
+				<h:panelGrid columns="4" style="margin-right: 10px;">
+
+					<h:outputText value="Available Seats" style="font-weight: bold" />
+					<h:outputText value="#{mainPageBean.availableSeats}" />
+
+					<h:outputText value="Tickets Quantity" style="font-weight: bold" />
+					<p:inputText value="#{mainPageBean.ticketsQuantity}">
+						<p:ajax event="keyup" update="ticketsMoney" />
+					</p:inputText>
+
+					<h:outputText value="Cost" style="font-weight: bold" />
+					<h:outputText value="#{mainPageBean.ticketsMoney}"
+						id="ticketsMoney" />
+
+					<h:outputText value="Insert Money" style="font-weight: bold" />
+					<p:inputText value="#{mainPageBean.moneyInserted}" />
+				</h:panelGrid>
+
+				<div style="float: right;">
+					<p:commandButton value="Back" id="backButton"
+						style="background-color: white; color: #444343; border: none; font-weight: bold;"
+						action="#{mainPageBean.backButton}">
+
+					</p:commandButton>
+					<p:commandButton value="Buy" id="buyButton"
+						style="background-color: white; color: #444343; border: none; font-weight: bold;"
+						action="#{mainPageBean.buyTickets}">
+					</p:commandButton>
+				</div>
+			</h:panelGroup>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

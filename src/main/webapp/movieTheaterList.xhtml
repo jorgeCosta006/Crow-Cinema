@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+</h:head>
+<h:body style="margin: 0;">
+
+	<div style="display: flex; flex-direction: row;">
+		<div>
+			<ui:include src="/sideMenuBar.xhtml" />
+		</div>
+
+		<div
+			style="width: -webkit-fill-available; background-color: #1c1c1f; background-image: url('./img/movie4.png'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; background-position: center;">
+			<ui:include src="/topMenuBar.xhtml" />
+
+
+			<!-- Page Content -->
+			<div>
+
+				<p:growl id="growl" showDetail="true" />
+
+				<div
+					style="display: flex; justify-content: center; margin-bottom: 1%; margin-top: 5%; align-items: center;">
+					<h2
+						style="margin-right: 700px; font-family: Arial, Helvetica, sans-serif;">Movie
+						Theaters List</h2>
+					<h:form>
+						<p:commandButton value="Create" action="#{backofficeBean.newMovieTheater}" update="couMovieTheater"/>
+					</h:form>
+				</div>
+
+				<h:form>
+					<div class="card" style="text-align: -webkit-center;">
+						<!-- <h2 style="font-family: Arial, Helvetica, sans-serif;">Genres</h2> -->
+						<p:dataTable var="product"
+							value="#{backofficeBean.listOfMovieTheaters}"
+							style="width: 1000px; text-align-last: center; box-shadow: 5px 6px 8px 0px #888888;"
+							rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+							paginatorPosition="bottom" tableStyle="table-layout: auto;">
+
+							<p:column style="width:2rem">
+								<p:rowToggler />
+							</p:column>
+							<p:column headerText="Name">
+								<h:outputText value="#{product.name}" />
+							</p:column>
+							<p:column headerText="Location">
+								<h:outputText value="#{product.location.name}" />
+							</p:column>
+							<p:column headerText="Is Active">
+								<h:outputLabel rendered="#{product.isActive != true}">
+									<i class="fas fa-times" style="color: red" />
+								</h:outputLabel>
+								<h:outputLabel rendered="#{product.isActive != false}">
+									<i class="fas fa-check" style="color: green" />
+								</h:outputLabel>
+							</p:column>
+
+							<p:column headerText="">
+								<p:commandLink style="margin-right:2%;"
+									action="#{backofficeBean.updateMovieTheaterRooms(product)}"
+									rendered="#{product.isActive != false}">
+									<i class="fas fa-plus" style="color: green; margin-right: 2%" />
+								</p:commandLink>
+								<p:commandLink style="margin-right:2%;"
+									action="#{backofficeBean.updateMovieTheater(product)}"
+									rendered="#{product.isActive != false}" update="couMovieTheater">
+									<i class="far fa-edit" style="color: blue; margin-right: 2%" />
+								</p:commandLink>
+								<p:commandLink
+									action="#{backofficeBean.changeActiveStateMovieTheater(product, false)}"
+									style="display: inline-block;"
+									rendered="#{product.isActive != false}">
+									<i class="fas fa-times" style="color: red" />
+								</p:commandLink>
+								<p:commandLink
+									action="#{backofficeBean.changeActiveStateMovieTheater(product, true)}"
+									style="display: inline-block;"
+									rendered="#{product.isActive != true}">
+									<i class="fas fa-check" style="color: green" />
+								</p:commandLink>
+							</p:column>
+
+							<p:rowExpansion>
+								<ui:repeat var="room" value="#{product.rooms}">
+									<ul>
+										<li><h:outputText value="#{room.name}" /></li>
+									</ul>
+								</ui:repeat>
+							</p:rowExpansion>
+
+						</p:dataTable>
+					</div>
+				</h:form>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Create Movie Theater Modal -->
+	<h:form id="couMovieTheater">
+		<p:dialog id="createMovieTheater" modal="true"
+			widgetVar="crMovieTheater" resizable="false"
+			stylr="position:absolute;" header="Create Movie Theater"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name" />
+				<p:inputText value="#{backofficeBean.name}" />
+
+				<p:outputLabel value="Location" />
+				<p:selectOneMenu id="advanced" value="#{backofficeBean.location}"
+					panelStyle="width:180px" effect="fade" var="c" filter="true"
+					filterMatchMode="startsWith"
+					converter="omnifaces.SelectItemsConverter"
+					style="width: -webkit-fill-available;">
+					<f:selectItems value="#{backofficeBean.listOfLocations}"
+						var="location" itemLabel="#{location.name}"
+						itemValue="#{location}" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{c.name}" />
+					</p:column>
+
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 2%">
+				<p:commandButton value="Create"
+					action="#{backofficeBean.createOrUpdateMovieTheater}" ajax="false"
+					style="padding: 0px 100px;" />
+			</div>
+		</p:dialog>
+	</h:form>
+
+	<!-- Add Room Modal -->
+	<h:form>
+		<p:dialog id="addRoom" modal="true" widgetVar="crAddRoom"
+			resizable="false" stylr="position:absolute;" header="Add Room"
+			style="border-radius: 10px;">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Movie" />
+				<p:selectOneMenu id="advanced" value="#{backofficeBean.room}"
+					panelStyle="width:180px" effect="fade" var="c" filter="true"
+					filterMatchMode="startsWith"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItems value="#{backofficeBean.listOfRooms}" var="room"
+						itemLabel="#{room.name}" itemValue="#{room}" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{c.name}" />
+					</p:column>
+				</p:selectOneMenu>
+
+				<div style="text-align: center; margin-top: 2%">
+					<p:commandButton value="Create"
+						action="#{backofficeBean.addRoomToMovieTheater}" ajax="false"
+						style="padding: 0px 100px;" />
+				</div>
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>
+
